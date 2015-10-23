@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+  "name": "Auth0AuthenticationApp",
+  "short_name": "Auth0AuthenticationApp",
+  "description": "",
+  "version": "0.0.1",
+  "minimum_chrome_version": "38",
+
+  "icons": {
+    "16": "assets/icon_16.png",
+    "128": "assets/icon_128.png"
+  },
+
+  "app": {
+    "background": {
+      "scripts": ["background.js"]
+    }
+  },
+  "permissions": [
+    "identity",
+    "https://portchaw.auth0.com/"
+  ]  
+}
