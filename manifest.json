@@ -18,6 +18,7 @@
   },
   "permissions": [
     "identity",
+    "storage",
     "https://portchaw.auth0.com/"
-  ]  
+  ]
 }

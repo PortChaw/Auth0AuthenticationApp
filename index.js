@@ -42,7 +42,7 @@ var gh = (function() {
             callback(new Error(chrome.runtime.lastError));
             return;
           }
-  
+
 
           // Upon success the response is appended to redirectUri, e.g.
           // https://{app_id}.chromiumapp.org/provider_cb#access_token={value}
@@ -82,7 +82,7 @@ var gh = (function() {
         }
 
         function exchangeCodeForToken(code, state) {
-          
+
           var xhr = new XMLHttpRequest();
 //          xhr.open("GET", "http://localhost/callback?code=" + code + "&state=" + state);
 //          xhr.send();
@@ -91,7 +91,7 @@ var gh = (function() {
           var data = "client_id=" + clientId
                    + "&client_secret=" + clientSecret
                    + "&redirect_uri=" + redirectUri
-                   + "&code=" + code 
+                   + "&code=" + code
                    + "&grant_type=authorization_code";
 
           console.log(data, "data");
@@ -107,7 +107,7 @@ var gh = (function() {
               console.log(data);
               console.log(response);
               if (response.hasOwnProperty('access_token')) {
-                
+
                 setAccessToken(response.access_token);
               } else {
                 callback(new Error('Cannot obtain access_token from code.'));
@@ -119,7 +119,7 @@ var gh = (function() {
           };
           xhr.send(data);
         }
-        
+
         function setAccessToken(token) {
           access_token = token;
           console.log('Setting access_token: ', access_token);
@@ -201,6 +201,14 @@ var gh = (function() {
     if (!error && status == 200) {
       console.log("Got the following user info: " + response);
       var user_info = JSON.parse(response);
+      // set token in local storage
+      var access_token = user_info.identities[0].access_token;
+      chrome.storage.sync.set({'access_token': access_token},
+      function()
+      {
+        // Notify that we saved.
+        console.log("set access_token in local storage to ", access_token);
+      });
       populateUserInfo(user_info);
       hideButton(signin_button);
       showButton(revoke_button);
