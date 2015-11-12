@@ -19,6 +19,8 @@
   "permissions": [
     "identity",
     "storage",
-    "https://portchaw.auth0.com/"
+    "https://portchaw.auth0.com/",
+    "https://localhost/",
+    "https://*.oposm.com/"
   ]
 }

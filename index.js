@@ -7,17 +7,39 @@ var gh = (function() {
 
   var tokenFetcher = (function() {
     // Replace clientId and clientSecret with values obtained by you for your
-    // application https://github.com/settings/applications.
-    var clientId = '[*** see settings at auth0.com ***]';
+    // Auth0.com
+    var clientId = 'BUUIiuVhVkADDIoow6Xc8eqv2zheQHWL';
     // Note that in a real-production app, you may not want to store
     // clientSecret in your App code.
     var clientSecret = '[*** see settings at auth0.com ***]';
     //FIXME:??
     var redirectUri = chrome.identity.getRedirectURL('provider_cb');
+    console.log(redirectUri);
     var redirectRe = new RegExp(redirectUri + '[#\?](.*)');
 
     var access_token = null;
 
+
+    function oposmRequest(toke)
+    {
+      console.log("oposmRequest");
+      var _xhr = new XMLHttpRequest();
+      console.log("attempting to get https://localhost/2YDXTuEDvuM/company URLfrom localhost using access token", toke);
+      _xhr.open("GET", "https://localhost/2YDXTuEDvuM/company");
+      //_xhr.open("GET", "https://localhost/protected");
+      //SEE
+      //http://stackoverflow.com/questions/28723176/passing-auth0-token-to-http-get-angular
+      _xhr.setRequestHeader('Authorization', 'Bearer ' + toke);
+      _xhr.onload = function()
+      {
+        console.log(_xhr);
+        if (this.status === 200) {
+          var response = JSON.parse(this.responseText);
+        }
+        console.log("response from localhost", response);
+      };
+      _xhr.send();
+    }
     return {
       getToken: function(interactive, callback) {
         // In case we already have an access_token cached, simply return it.
@@ -72,7 +94,9 @@ var gh = (function() {
           console.log("handleProviderResponse");
           console.log('providerResponse', values);
           if (values.hasOwnProperty('access_token'))
+          {
             setAccessToken(values.access_token);
+          }
           // If response does not have an access_token, it might have the code,
           // which can be used in exchange for token.
           else if (values.hasOwnProperty('code'))
@@ -103,9 +127,12 @@ var gh = (function() {
             // can be easily parsed to an object.
             console.log(xhr);
             if (this.status === 200) {
+              console.log(this.responseText);
               var response = JSON.parse(this.responseText);
               console.log(data);
-              console.log(response);
+              console.log("response, yo", response);
+              console.log("calling oposmRequest with", response.id_token);
+              oposmRequest(response.id_token);
               if (response.hasOwnProperty('access_token')) {
 
                 setAccessToken(response.access_token);
@@ -139,6 +166,8 @@ var gh = (function() {
     var access_token;
 
     console.log('xhrWithAuth', method, url, interactive);
+
+
     getToken();
 
     function getToken() {
@@ -209,6 +238,7 @@ var gh = (function() {
         // Notify that we saved.
         console.log("set access_token in local storage to ", access_token);
       });
+
       populateUserInfo(user_info);
       hideButton(signin_button);
       showButton(revoke_button);
