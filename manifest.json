@@ -19,6 +19,6 @@
   "permissions": [
     "identity",
     "storage",
-    "https://portchaw.auth0.com/"
+    "https://*.auth0.com/"
   ]
 }
